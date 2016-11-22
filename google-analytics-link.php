@@ -7,6 +7,8 @@ Author:Raphael H. Batagini
 Version:1.0
 Author URI:raphabatagini@gmail.com
 */
+
+    define('BASE_DIRECTORY', '/google-analytics-link');
     
     /**********************************************************************/
     /********************* CREATING MENU AND SUB MENU *********************/
@@ -14,8 +16,8 @@ Author URI:raphabatagini@gmail.com
 
     function menu()
     {
-        add_menu_page('Pagina - Teste', 'Menu Teste', 'manage_options', '/plugin-wp/about.php');
-        add_submenu_page('/plugin-wp/about.php', 'Pagina - Teste', 'Submenu Teste', 'manage_options', '/plugin-wp/test.php');
+        add_menu_page('About The Plugin', 'Google Analytics Link', 'manage_options', BASE_DIRECTORY . '/about.php');
+        add_submenu_page(BASE_DIRECTORY . '/about.php', 'Configurations', 'Configurations', 'manage_options', BASE_DIRECTORY . '/config.php');
     }
     
     //call function menu when run admin_menu
@@ -28,17 +30,51 @@ Author URI:raphabatagini@gmail.com
     
     
     /****************************************************************/
+    /********************* WORKING WITH ACTIONS *********************/
+    /****************************************************************/
+    
+    //call function when init admin
+    add_action( 'admin_init', 'update_ga_tracking_code' );
+    
+    function update_ga_tracking_code()
+    {
+        register_setting('google-analytics-tracking-info', 'ga_tracking_code');
+    }
+    
+    //adding analytics link to the footer
+    function add_ga_link_footer() {
+        $code = get_option('ga_tracking_code');
+        if ($code) {
+            echo "<script>
+                      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+                      ga('create', '$code', 'auto');
+                      ga('send', 'pageview');  
+                  </script>";
+        }
+    }
+    
+    add_action('wp_footer', 'add_ga_link_footer', 10);
+    
+    /***********************************************************************/
+    /********************* END OF WORKING WITH ACTIONS *********************/
+    /***********************************************************************/
+    
+    
+    /****************************************************************/
     /********************* WORKING WITH FILTERS *********************/
     /****************************************************************/
     
     //add regards at the bottom of the post content
     function post_content_regards( $content )
     {
-        return $content . '<br/><small>Até a próxima!</small>';    
+        return $content . '<br/><small>Até a próxima!</small>';
     }
     
     //add post thanks message at the bottom of the post content
-    function post_content_thanks_message( $content ) 
+    function post_content_thanks_message( $content )
     {
         return $content . '<br/><small>Agradecemos a sua visita e o tempo dedicado a leitura e visualização de nossos conteúdos.</small>';
     }
@@ -63,37 +99,6 @@ Author URI:raphabatagini@gmail.com
     
     /***********************************************************************/
     /********************* END OF WORKING WITH FILTERS *********************/
-    /***********************************************************************/
-    
-    
-    
-    /****************************************************************/
-    /********************* WORKING WITH ACTIONS *********************/
-    /****************************************************************/
-    
-    //adding message to footer
-    function add_footer_message() {
-        echo '<p style="color: #fff">Adding some content to this message</p>';
-    }
-    add_action('wp_footer', 'add_footer_message', 10);
-    
-    //create a custom function
-    function do_something($a, $b) {
-        print_r($a);
-        print_r($b);
-    }
-    
-    $a = 'test_1';
-    $b = 'test_2';
-
-    //create a custom hook
-    do_action('i_am_hook', $a, $b);
-    
-    //link custom hook to custom function
-    add_action('i_am_hook', 'do_something', 10, 2);
-    
-    /***********************************************************************/
-    /********************* END OF WORKING WITH ACTIONS *********************/
     /***********************************************************************/
     
 ?>
