@@ -1,6 +1,6 @@
 <form method="post" action="options.php">
 	<?php settings_fields( 'google-analytics-tracking-info' ); ?>
-    <?php do_settings_sections( 'google-analytics-tracking-info' ); ?>
+    	<?php do_settings_sections( 'google-analytics-tracking-info' ); ?>
 	<h1>Google Analytics Link</h1>
 	<br/>
 	<h3>Plugin configurations</h3>
